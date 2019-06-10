@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Todo = props => {
   const [todoName, setTodoName] = useState('');
@@ -10,6 +11,9 @@ const Todo = props => {
 
   const todoAddHandler = () => {
     setTodoList(todoList.concat(todoName));
+    axios.post('https://jsonplaceholder.typicode.com/todos/1', todoName)
+    .then(result => console.log(result))
+    .catch(error => console.log(error))
   };
 
   return <React.Fragment>
