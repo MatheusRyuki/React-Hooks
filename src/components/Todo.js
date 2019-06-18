@@ -4,7 +4,8 @@ import axios from 'axios';
 const Todo = props => {
   const [todoName, setTodoName] = useState('');
   const [todoList, setTodoList] = useState([]);
-  
+  const [submittedTodo, setSubmittedTodo] = useState(null);
+
   useEffect(() => {
     axios.get('https://jsonplaceholder.typicode.com/todos')
     .then(result => {
@@ -20,26 +21,25 @@ const Todo = props => {
     };
   }, [todoName]);
 
-  const mouseMoveHandler = event => {
-    console.log(event.clientX, event.clientY);
-  };
-
   useEffect(() => {
-   document.addEventListener('mousemove', mouseMoveHandler) 
-   return () => {
-     document.removeEventListener('mousemove', mouseMoveHandler);
-   }
-  }, []);
+    if(submittedTodo) {
+      setTodoList(todoList.concat(submittedTodo));
+    }
+  }, [submittedTodo]);
   
   const inputChangeHandler = (event) => {
     setTodoName(event.target.value);
   };
 
   const todoAddHandler = () => {
-    setTodoList(todoList.concat(todoName));
-    axios.post('https://jsonplaceholder.typicode.com/todos/1', todoName)
-    .then(result => console.log(result))
-    .catch(error => console.log(error))
+    axios.get('https://jsonplaceholder.typicode.com/todos/1')
+    .then(result => {
+      const todoItem = {id: result.data.id, name: result.data.title}
+      setSubmittedTodo(todoItem);
+
+      setTodoList(todoList.concat(todoItem));
+    })
+      .catch(error => console.log(error))
   };
 
   return <React.Fragment>
