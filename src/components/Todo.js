@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import React, { useEffect, useReducer, useMemo } from 'react';
 import axios from 'axios';
 import List from './List';
+import { UserFormInput } from '../hooks/forms';
 
 const Todo = props => {
-  const [todoName, setTodoName] = useState('');
-  const [inputIsValid, setInputIsValid] = useState(false);
+  const todoInput = UserFormInput();
 
   const todoListReducer = (state, action) => {
     switch(action.type) {
@@ -32,16 +32,7 @@ const Todo = props => {
     return () => {
       console.log('Clean up');
     };
-  }, [todoName]);
-  
-  const inputChangeHandler = (event) => {
-    setTodoName(event.target.value);
-    if(event.target.value.trim() === '') {
-      setInputIsValid(false);
-    } else {
-      setInputIsValid(true);
-    }
-  };
+  }, [todoInput.value]);
 
   const [todoList, dispatch] = useReducer(todoListReducer, []);
 
@@ -59,8 +50,8 @@ const Todo = props => {
   };
 
   return <React.Fragment>
-    <input type="text" placeholder="A fazer"  onChange={inputChangeHandler}
-    style={{backgroundColor: inputIsValid ? 'transparent' : 'red' }} value={todoName}/>
+    <input type="text" placeholder="A fazer"  onChange={todoInput.onChange}
+    style={{backgroundColor: todoInput.validity ? 'transparent' : 'red' }} value={todoInput.value}/>
     <button type="button" onClick={todoAddHandler}>Adicionar</button>
     {useMemo(() => <List todoList={todoList} todoRemoveHandler={todoRemoveHandler} />, [todoList])}
   </React.Fragment>
