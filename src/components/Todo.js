@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const Todo = props => {
   const [todoName, setTodoName] = useState('');
-  const [submittedTodo, setSubmittedTodo] = useState(null);
 
   const todoListReducer = (state, action) => {
     switch(action.type) {
@@ -32,12 +31,6 @@ const Todo = props => {
       console.log('Clean up');
     };
   }, [todoName]);
-
-  useEffect(() => {
-    if(submittedTodo) {
-      dispatch({type: 'ADD', payload: submittedTodo});
-    }
-  }, [submittedTodo]);
   
   const inputChangeHandler = (event) => {
     setTodoName(event.target.value);
@@ -45,13 +38,15 @@ const Todo = props => {
 
   const [todoList, dispatch] = useReducer(todoListReducer, []);
 
+  const todoRemoveHandler = todoId => {
+    dispatch({type: 'REMOVE', payload: todoId})
+  }
+
   const todoAddHandler = () => {
-    axios.get(`https://jsonplaceholder.typicode.com/todos/${Math.floor(Math.random())}`)
+    axios.get(`https://jsonplaceholder.typicode.com/todos/${Math.floor(Math.random()*100+100)}`)
     .then(result => {
       const todoItem = {id: result.data.id, name: result.data.title}
-      setSubmittedTodo(todoItem);
-
-      setTodoList(todoList.concat(todoItem));
+      dispatch({type: 'ADD', payload: todoItem});
     })
       .catch(error => console.log(error))
   };
@@ -61,7 +56,7 @@ const Todo = props => {
     <button type="button" onClick={todoAddHandler}>Adicionar</button>
     <ul>
       {todoList.map(todo => (
-        <li key={todo.id}>{todo.name}</li>
+        <li key={todo.id} onClick={() => todoRemoveHandler(todo.id)}>{todo.name}</li>
       ))}
     </ul>
   </React.Fragment>
