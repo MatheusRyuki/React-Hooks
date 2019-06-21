@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import axios from 'axios';
 import List from './List';
 
@@ -62,7 +62,7 @@ const Todo = props => {
     <input type="text" placeholder="A fazer"  onChange={inputChangeHandler}
     style={{backgroundColor: inputIsValid ? 'transparent' : 'red' }} value={todoName}/>
     <button type="button" onClick={todoAddHandler}>Adicionar</button>
-    <List todoList={todoList} todoRemoveHandler={todoRemoveHandler} />
+    {useMemo(() => <List todoList={todoList} todoRemoveHandler={todoRemoveHandler} />, [todoList])}
   </React.Fragment>
 };
 
