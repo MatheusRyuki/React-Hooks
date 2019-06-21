@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
+import List from './List';
 
 const Todo = props => {
   const [todoName, setTodoName] = useState('');
+  const [inputIsValid, setInputIsValid] = useState(false);
 
   const todoListReducer = (state, action) => {
     switch(action.type) {
@@ -34,6 +36,11 @@ const Todo = props => {
   
   const inputChangeHandler = (event) => {
     setTodoName(event.target.value);
+    if(event.target.value.trim() === '') {
+      setInputIsValid(false);
+    } else {
+      setInputIsValid(true);
+    }
   };
 
   const [todoList, dispatch] = useReducer(todoListReducer, []);
@@ -52,13 +59,10 @@ const Todo = props => {
   };
 
   return <React.Fragment>
-    <input type="text" placeholder="A fazer"  onChange={inputChangeHandler} value={todoName}/>
+    <input type="text" placeholder="A fazer"  onChange={inputChangeHandler}
+    style={{backgroundColor: inputIsValid ? 'transparent' : 'red' }} value={todoName}/>
     <button type="button" onClick={todoAddHandler}>Adicionar</button>
-    <ul>
-      {todoList.map(todo => (
-        <li key={todo.id} onClick={() => todoRemoveHandler(todo.id)}>{todo.name}</li>
-      ))}
-    </ul>
+    <List todoList={todoList} todoRemoveHandler={todoRemoveHandler} />
   </React.Fragment>
 };
 
